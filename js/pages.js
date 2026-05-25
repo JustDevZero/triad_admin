@@ -88,11 +88,11 @@ const pages = (() => {
         document.getElementById("code-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const code = document.getElementById("code").value;
-            const keepSession = document.getElementById("keep-session").checked;
-            const result = await api.post("/auth/verify-otp", { email: userEmail, code });
+            const rememberMe = document.getElementById("keep-session").checked;
+            const result = await api.post("/auth/verify-otp", { email: userEmail, code, remember_me: rememberMe });
 
             if (result && result.access_token) {
-                api.setToken(result.access_token, keepSession);
+                api.setToken(result.access_token);
                 router.navigate("/dashboard");
             } else {
                 const err = document.getElementById("login-error");
