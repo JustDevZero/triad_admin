@@ -39,6 +39,10 @@ const pages = (() => {
                             class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition">
                             Verify
                         </button>
+                        <button type="button" id="back-btn"
+                            class="w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition">
+                            ← Back
+                        </button>
                     </form>
                 </div>
                 ${socialEnabled ? `
@@ -69,6 +73,12 @@ const pages = (() => {
             document.getElementById("login-step-code").classList.remove("hidden");
             document.getElementById("sent-email").textContent = userEmail;
             document.getElementById("code").focus();
+        });
+
+        document.getElementById("back-btn").addEventListener("click", () => {
+            document.getElementById("login-step-code").classList.add("hidden");
+            document.getElementById("login-step-email").classList.remove("hidden");
+            document.getElementById("login-error").classList.add("hidden");
         });
 
         document.getElementById("code-form").addEventListener("submit", async (e) => {
