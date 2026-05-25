@@ -206,6 +206,7 @@ const pages = (() => {
             <div class="flex items-center space-x-6">
                 <span class="text-xl font-bold text-indigo-400">Triad Admin</span>
                 <a href="#/dashboard" class="text-gray-300 hover:text-white">${i18n.t("nav.dashboard")}</a>
+                <a href="#/users" class="text-gray-300 hover:text-white">${i18n.t("nav.users")}</a>
                 <a href="#/reports" class="text-gray-300 hover:text-white">${i18n.t("nav.reports")}</a>
                 <a href="#/sanctions" class="text-gray-300 hover:text-white">${i18n.t("nav.sanctions")}</a>
                 <a href="#/devices" class="text-gray-300 hover:text-white">${i18n.t("nav.devices")}</a>
@@ -255,6 +256,64 @@ const pages = (() => {
                     <td class="py-3"><a href="#/reports/${r.id}" class="text-indigo-400 hover:text-indigo-300">${i18n.t("reports.view")}</a></td>
                 </tr>`).join("")}
             </tbody></table>`;
+    }
+
+
+    // --- Users ---
+    async function users(app) {
+        app.innerHTML = `<p class="text-gray-400">${i18n.t("common.loading")}</p>`;
+        const data = await api.get("/admin/users");
+        app.innerHTML = `
+        ${nav()}
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold">${i18n.t("users.title")}</h1>
+            <input type="text" id="user-search" placeholder="${i18n.t("users.search_placeholder")}"
+                class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div id="users-table">${usersTable(data)}</div>`;
+
+        let debounce = null;
+        document.getElementById("user-search").addEventListener("input", (e) => {
+            clearTimeout(debounce);
+            debounce = setTimeout(async () => {
+                const q = e.target.value.trim();
+                const results = q ? await api.get(`/admin/users?search=${encodeURIComponent(q)}`) : await api.get("/admin/users");
+                document.getElementById("users-table").innerHTML = usersTable(results);
+            }, 300);
+        });
+    }
+
+    async function userDetail(app, params) {
+        app.innerHTML = `<p class="text-gray-400">${i18n.t("common.loading")}</p>`;
+        const u = await api.get(`/admin/users/${params.id}`);
+        const profiles = await api.get(`/admin/users/${params.id}/profiles`);
+        if (!u || u.detail) {
+            app.innerHTML = `${nav()}<p class="text-red-400">User not found</p>`;
+            return;
+        }
+        app.innerHTML = `
+        ${nav()}
+        <a href="#/users" class="text-indigo-400 hover:text-indigo-300 mb-6 inline-block">${i18n.t("users.back")}</a>
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold mb-4">${u.username || u.email}</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div><p class="text-gray-400">Email</p><p>${u.email}</p></div>
+                <div><p class="text-gray-400">Username</p><p>${u.username || "—"}</p></div>
+                <div><p class="text-gray-400">Role</p><p>${roleBadge(u.role)}</p></div>
+                <div><p class="text-gray-400">Active</p><p>${u.is_active ? "✅" : "❌"}</p></div>
+            </div>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h2 class="text-lg font-semibold mb-4">${i18n.t("users.profiles")} (${profiles.length})</h2>
+            ${profiles.length ? profiles.map(p => `
+                <div class="flex items-center justify-between bg-gray-700 rounded p-3 mb-2">
+                    <div>
+                        <span class="font-medium">${p.display_name}</span>
+                        <span class="text-xs text-gray-400 ml-2">${p.profile_type}</span>
+                    </div>
+                    <span class="text-xs text-gray-500">${p.id.slice(0, 8)}</span>
+                </div>`).join("") : `<p class="text-gray-500">${i18n.t("users.no_profiles")}</p>`}
+        </div>`;
     }
 
     // --- Sanctions ---
@@ -391,6 +450,38 @@ const pages = (() => {
     }
 
     // --- Helpers ---
+    function usersTable(users) {
+        if (!users || !users.length) return `<p class="text-center text-gray-500 py-8">${i18n.t("users.no_users")}</p>`;
+        return `<table class="w-full text-sm">
+            <thead><tr class="text-left text-gray-400 border-b border-gray-700">
+                <th class="pb-3">${i18n.t("users.col_email")}</th>
+                <th class="pb-3">${i18n.t("users.col_username")}</th>
+                <th class="pb-3">${i18n.t("users.col_role")}</th>
+                <th class="pb-3">${i18n.t("users.col_active")}</th>
+                <th class="pb-3">${i18n.t("users.col_created")}</th>
+                <th class="pb-3"></th>
+            </tr></thead>
+            <tbody>${users.map(u => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                    <td class="py-3">${u.email}</td>
+                    <td class="py-3">${u.username || "—"}</td>
+                    <td class="py-3">${roleBadge(u.role)}</td>
+                    <td class="py-3">${u.is_active ? "✅" : "❌"}</td>
+                    <td class="py-3 text-gray-400">${u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}</td>
+                    <td class="py-3"><a href="#/users/${u.id}" class="text-indigo-400 hover:text-indigo-300">View</a></td>
+                </tr>`).join("")}
+            </tbody></table>`;
+    }
+
+    function roleBadge(role) {
+        const colors = {
+            admin: "bg-red-900 text-red-300",
+            moderator: "bg-blue-900 text-blue-300",
+            user: "bg-gray-700 text-gray-300",
+        };
+        return `<span class="px-2 py-1 rounded text-xs ${colors[role] || "bg-gray-700"}">${role}</span>`;
+    }
+
     function sanctionBadge(type) {
         const colors = {
             warning: "bg-yellow-900 text-yellow-300",
@@ -401,5 +492,5 @@ const pages = (() => {
         return `<span class="px-2 py-1 rounded text-xs ${colors[type] || "bg-gray-700"}">${type}</span>`;
     }
 
-    return { login, dashboard, reports, reportDetail, reviewReport, sanctions, removeSanction, devices, unbanDevice, audit, auditChain };
+    return { login, dashboard, reports, reportDetail, reviewReport, sanctions, removeSanction, devices, unbanDevice, audit, auditChain, users, userDetail };
 })();

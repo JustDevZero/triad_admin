@@ -37,5 +37,17 @@
     "report.take_action": "Tomar Acción",
     "report.already_resolved": "Reporte ya resuelto",
     "common.loading": "Cargando...",
-    "dashboard.access_denied": "¡Ups! No tienes acceso de administrador."
+    "dashboard.access_denied": "¡Ups! No tienes acceso de administrador.",
+    "nav.users": "Usuarios",
+    "users.title": "Usuarios",
+    "users.search_placeholder": "Buscar por email o username...",
+    "users.col_email": "Email",
+    "users.col_username": "Username",
+    "users.col_role": "Rol",
+    "users.col_active": "Activo",
+    "users.col_created": "Creado",
+    "users.no_users": "No se encontraron usuarios",
+    "users.profiles": "Perfiles",
+    "users.no_profiles": "Sin perfiles",
+    "users.back": "← Volver a Usuarios"
 }

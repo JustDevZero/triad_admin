@@ -7,6 +7,8 @@
 
     router.register("/login", pages.login);
     router.register("/dashboard", pages.dashboard);
+    router.register("/users", pages.users);
+    router.register("/users/:id", pages.userDetail);
     router.register("/reports", pages.reports);
     router.register("/reports/:id", pages.reportDetail);
     router.register("/sanctions", pages.sanctions);

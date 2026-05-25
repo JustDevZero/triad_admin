@@ -37,5 +37,17 @@
     "report.take_action": "Take Action",
     "report.already_resolved": "Report already resolved",
     "common.loading": "Loading...",
-    "dashboard.access_denied": "Oops! You don't have admin access."
+    "dashboard.access_denied": "Oops! You don't have admin access.",
+    "nav.users": "Users",
+    "users.title": "Users",
+    "users.search_placeholder": "Search by email or username...",
+    "users.col_email": "Email",
+    "users.col_username": "Username",
+    "users.col_role": "Role",
+    "users.col_active": "Active",
+    "users.col_created": "Created",
+    "users.no_users": "No users found",
+    "users.profiles": "Profiles",
+    "users.no_profiles": "No profiles",
+    "users.back": "← Back to Users"
 }
