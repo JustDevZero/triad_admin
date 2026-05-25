@@ -35,6 +35,10 @@ const pages = (() => {
                                 class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-center text-2xl tracking-widest placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 placeholder="000000">
                         </div>
+                        <label class="flex items-center space-x-2 text-sm text-gray-400">
+                            <input type="checkbox" id="keep-session" class="rounded bg-gray-700 border-gray-600">
+                            <span>Keep me logged in</span>
+                        </label>
                         <button type="submit"
                             class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition">
                             Verify
@@ -84,10 +88,11 @@ const pages = (() => {
         document.getElementById("code-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const code = document.getElementById("code").value;
+            const keepSession = document.getElementById("keep-session").checked;
             const result = await api.post("/auth/verify-otp", { email: userEmail, code });
 
             if (result && result.access_token) {
-                api.setToken(result.access_token);
+                api.setToken(result.access_token, keepSession);
                 router.navigate("/dashboard");
             } else {
                 const err = document.getElementById("login-error");

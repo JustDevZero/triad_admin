@@ -11,12 +11,22 @@ const api = (() => {
         return !baseUrl();
     }
 
-    let token = sessionStorage.getItem("token") || null;
+    let token = localStorage.getItem("token") || sessionStorage.getItem("token") || null;
 
-    function setToken(t) {
+    function setToken(t, persist = false) {
         token = t;
-        if (t) sessionStorage.setItem("token", t);
-        else sessionStorage.removeItem("token");
+        if (t) {
+            if (persist) {
+                localStorage.setItem("token", t);
+                sessionStorage.removeItem("token");
+            } else {
+                sessionStorage.setItem("token", t);
+                localStorage.removeItem("token");
+            }
+        } else {
+            sessionStorage.removeItem("token");
+            localStorage.removeItem("token");
+        }
     }
 
     function getToken() {
