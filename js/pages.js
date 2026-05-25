@@ -106,6 +106,17 @@ const pages = (() => {
     async function dashboard(app) {
         app.innerHTML = `<p class="text-gray-400">${i18n.t("common.loading")}</p>`;
         const stats = await api.get("/admin/stats");
+        if (!stats || stats.detail) {
+            app.innerHTML = `
+            ${nav()}
+            <div class="flex items-center justify-center min-h-[60vh]">
+                <div class="text-center">
+                    <p class="text-4xl mb-4">🚫</p>
+                    <p class="text-xl text-gray-300">${i18n.t("dashboard.access_denied")}</p>
+                </div>
+            </div>`;
+            return;
+        }
         app.innerHTML = `
         ${nav()}
         <h1 class="text-3xl font-bold mb-8">${i18n.t("dashboard.title")}</h1>

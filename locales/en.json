@@ -36,5 +36,6 @@
     "report.dismiss": "Dismiss",
     "report.take_action": "Take Action",
     "report.already_resolved": "Report already resolved",
-    "common.loading": "Loading..."
+    "common.loading": "Loading...",
+    "dashboard.access_denied": "Oops! You don't have admin access."
 }

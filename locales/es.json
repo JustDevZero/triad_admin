@@ -36,5 +36,6 @@
     "report.dismiss": "Descartar",
     "report.take_action": "Tomar Acción",
     "report.already_resolved": "Reporte ya resuelto",
-    "common.loading": "Cargando..."
+    "common.loading": "Cargando...",
+    "dashboard.access_denied": "¡Ups! No tienes acceso de administrador."
 }
